@@ -50,7 +50,7 @@ class TodoService {
         const prevPageNo = (page > firstPageNo) ? page - 1 : firstPageNo;
         queryParams.set('page', prevPageNo);
         queryParams.set('limit', limit);
-        const prevPageUrl = [fullUrl, '?', queryParams.toString()].join('');    
+        const prevPageUrl = [fullUrl, '?', queryParams.toString()].join('');
 
         const nextPageNo = (page < lastPageNo) ? page + 1 : lastPageNo;
         queryParams.set('page', nextPageNo);

@@ -20,7 +20,7 @@ class TodoController {
                 });
             }
 
-            const fullUrl = [req.protocol, '://', req.get('host'), req.originalUrl].join('');
+            const fullUrl = [req.protocol, '://', req.get('host'), req.baseUrl, req.path].join('');
             const pagedResponse = await TodoService.getAllTodos(searchParams, fullUrl);
 
             res.set({
@@ -71,7 +71,7 @@ class TodoController {
 
             const requestBody = Object.assign(Object.create(null), req.body);
             const createdTodoItem = await TodoService.addTodo(requestBody);
-            const fullUrl = [req.protocol, '://', req.get('host'), req.originalUrl, '/' ,createdTodoItem._id].join('');
+            const fullUrl = [req.protocol, '://', req.get('host'), req.baseUrl, req.path, createdTodoItem._id].join('');
             res.location(fullUrl);
 
             return res.status(StatusCodes.CREATED).json(createdTodoItem);

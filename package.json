@@ -1,7 +1,7 @@
 {
-  "name": "node-mongoose",
+  "name": "todo-backend",
   "version": "1.0.0",
-  "description": "Backend for todo",
+  "description": "Backend for managing todo",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

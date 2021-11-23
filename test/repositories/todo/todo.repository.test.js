@@ -130,23 +130,23 @@ describe('TodoRepository', () => {
     });
 
     describe('#getById', () => {
-        const _id = mongoose.Types.ObjectId();
-        const title = faker.lorem.sentence();
 
-        const stubValue = {
-            _id,
-            title,
-            completed: false,
-            createdAt: faker.date.past(),
-            updatedAt: faker.date.past()
-        };
 
         it('should return todo item when valid id is passed', async () => {
             // Arrange
+            const _id = mongoose.Types.ObjectId();
+            const stubValue = {
+                _id,
+                title: faker.lorem.sentence(),
+                description: faker.lorem.paragraph(),
+                completed: false,
+                createdAt: faker.date.past(),
+                updatedAt: faker.date.past()
+            };
             const stub = sinon.stub(Todo, 'findById').returns(stubValue);
 
             // Act
-            const todo = await TodoRepository.getById(_id);
+            const todo = await TodoRepository.getById(_id.toString());
 
             // Assert
             expect(stub.calledOnce).to.be.true;
@@ -174,20 +174,26 @@ describe('TodoRepository', () => {
     });
 
     describe('#add', () => {
+        const stubValue = {
+            _id: mongoose.Types.ObjectId(),
+            title: faker.lorem.sentence(),
+            description: faker.lorem.paragraph(),
+            completed: false,
+            createdAt: faker.date.past(),
+            updatedAt: faker.date.past()
+        };
+        const dto = { 
+            title: stubValue.title,
+            description: stubValue.description,
+            completed: false 
+        };
+
         it('should add a new todo', async () => {
             // Arrange
-            const stubValue = {
-                _id: mongoose.Types.ObjectId(),
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: false,
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past()
-            };
             const stub = sinon.stub(Todo, 'create').returns(stubValue);
 
             // Act
-            const todo = await TodoRepository.add({ title: stubValue.title, description: stubValue.description, completed: false });
+            const todo = await TodoRepository.add(dto);
 
             // Assert
             expect(stub.calledOnce).to.be.true;
@@ -204,20 +210,6 @@ describe('TodoRepository', () => {
             const error = new Error();
             error.name = 'MongoError';
             error.code = 11000;
-
-            const stubValue = {
-                _id: mongoose.Types.ObjectId(),
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: false,
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past()
-            };
-            const dto = {
-                title: stubValue.title,
-                description: stubValue.description,
-                completed: false
-            };
 
             sinon.stub(Todo, 'create').withArgs(dto).onFirstCall().returns(stubValue)
                 .withArgs(dto).onSecondCall().throws(error);
@@ -236,32 +228,32 @@ describe('TodoRepository', () => {
     });
 
     describe('#update', () => {
+        const id = mongoose.Types.ObjectId();
+
+        const updateDto = {
+            id: id.toString(),
+            title: faker.lorem.sentence(),
+            description: faker.lorem.paragraph(),
+            completed: true
+        };
+        const filter = {
+            _id: id
+        };
+        const payload = {
+            title: updateDto.title,
+            description: updateDto.description,
+            completed: updateDto.completed
+        };
+        const updateResult = {
+            acknowledged: true,
+            modifiedCount: 1,
+            upsertedId: null,
+            upsertedCount: 0,
+            matchedCount: 1
+        };
+
         it('should update correctly when valid id is passed', async () => {
             // Arrange
-            const id = mongoose.Types.ObjectId();
-
-            const updateDto = {
-                id: id.toString(),
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: true
-            };
-            const filter = {
-                _id: id
-            };
-            const payload = {
-                title: updateDto.title,
-                description: updateDto.description,
-                completed: updateDto.completed
-            };
-            const updateResult = {
-                acknowledged: true,
-                modifiedCount: 1,
-                upsertedId: null,
-                upsertedCount: 0,
-                matchedCount: 1
-            };
-
             const stub = sinon.stub(Todo, 'updateOne').withArgs(filter, payload).returns(updateResult);
 
             // Act
@@ -273,31 +265,15 @@ describe('TodoRepository', () => {
             assert.strictEqual(result.modifiedCount, updateResult.modifiedCount);
         });
 
-        it('should not update anything when invalid id is passed', async () => {
+        it('should not update anything when non existent id is passed', async () => {
             // Arrange
             const invalidId = mongoose.Types.ObjectId();
+            
+            updateDto.id = invalidId.toString();
+            filter._id = invalidId;
 
-            const updateDto = {
-                id: invalidId.toString(),
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: true
-            };
-            const filter = {
-                _id: invalidId
-            };
-            const payload = {
-                title: updateDto.title,
-                description: updateDto.description,
-                completed: updateDto.completed
-            };
-            const updateResult = {
-                acknowledged: true,
-                modifiedCount: 0,
-                upsertedId: null,
-                upsertedCount: 0,
-                matchedCount: 0
-            };
+            updateResult.matchedCount = 0;
+            updateResult.modifiedCount = 0;
 
             const stub = sinon.stub(Todo, 'updateOne').withArgs(filter, payload).returns(updateResult);
 
@@ -312,17 +288,17 @@ describe('TodoRepository', () => {
     });
 
     describe('#delete', () => {
+        const id = mongoose.Types.ObjectId();
+        const filter = {
+            _id: id
+        };
+        const deleteResult = {
+            acknowledged: true,
+            deletedCount: 1
+        };
+
         it('should delete correctly when valid id is passed', async () => {
             // Arrange
-            const id = mongoose.Types.ObjectId();
-            const filter = {
-                _id: id
-            };
-            const deleteResult = {
-                acknowledged: true,
-                deletedCount: 1
-            };
-
             const stub = sinon.stub(Todo, 'deleteOne').withArgs(filter).returns(deleteResult);
 
             // Act
@@ -334,16 +310,9 @@ describe('TodoRepository', () => {
         });
 
 
-        it('should not delete anything when invalid id is passed', async () => {
+        it('should not delete anything when non existent id is passed', async () => {
             // Arrange
-            const id = mongoose.Types.ObjectId();
-            const filter = {
-                _id: id
-            };
-            const deleteResult = {
-                acknowledged: true,
-                deletedCount: 0
-            };
+            deleteResult.deletedCount = 0;
 
             const stub = sinon.stub(Todo, 'deleteOne').withArgs(filter).returns(deleteResult);
 

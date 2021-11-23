@@ -31,7 +31,7 @@ describe('TodoService', () => {
                 next_page: "/api/v1/todo?page=1&limit=10",
                 page_size: 10,
                 total_count: 1,
-                data: [
+                data: Array.from({ length: 10 }, () => (
                     {
                         _id: mongoose.Types.ObjectId(),
                         title: faker.lorem.sentence(),
@@ -40,7 +40,7 @@ describe('TodoService', () => {
                         createdAt: faker.date.past(),
                         updatedAt: faker.date.past()
                     }
-                ]
+                ))
             };
             sinon.stub(TodoRepository, 'getAll').withArgs(page, offset, limit).returns(stubResponse);
             const spy = sinon.spy(TodoService, 'getAll');
@@ -57,20 +57,20 @@ describe('TodoService', () => {
     describe('#getById', () => {
         it('should return todo item when valid id is passed', async () => {
             // Arrange
+            const id = mongoose.Types.ObjectId();
             const todoResponse = {
-                _id: mongoose.Types.ObjectId(),
+                _id: id,
                 title: faker.lorem.sentence(),
                 description: faker.lorem.paragraph(),
                 completed: false,
                 createdAt: faker.date.past(),
                 updatedAt: faker.date.past(),
             };
-            const id = mongoose.Types.ObjectId().toString();
-            sinon.stub(TodoRepository, 'getById').withArgs(id).returns(todoResponse);
+            sinon.stub(TodoRepository, 'getById').withArgs(id.toString()).returns(todoResponse);
             const spy = sinon.spy(TodoService, 'getById');
 
             // Act
-            await TodoService.getById(id);
+            await TodoService.getById(id.toString());
 
             // Assert
             expect(spy.calledOnce).to.be.true;
@@ -111,23 +111,23 @@ describe('TodoService', () => {
     });
 
     describe('#add', () => {
+        const stubValue = {
+            _id: mongoose.Types.ObjectId(),
+            title: faker.lorem.sentence(),
+            description: faker.lorem.paragraph(),
+            completed: false,
+            createdAt: faker.date.past(),
+            updatedAt: faker.date.past()
+        };
+
+        const dto = {
+            title: stubValue.title,
+            description: stubValue.description,
+            completed: false
+        };
+
         it('should add a new todo', async () => {
             // Arrange
-            const stubValue = {
-                _id: mongoose.Types.ObjectId(),
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: false,
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past()
-            };
-
-            const dto = {
-                title: stubValue.title,
-                description: stubValue.description,
-                completed: false
-            };
-
             sinon.stub(TodoRepository, 'add').withArgs(dto).returns(stubValue);
             const spy = sinon.spy(TodoService, 'add');
 
@@ -143,21 +143,6 @@ describe('TodoService', () => {
             const error = new Error();
             error.name = 'MongoError';
             error.code = 11000;
-
-            const stubValue = {
-                _id: mongoose.Types.ObjectId(),
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: false,
-                createdAt: faker.date.past(),
-                updatedAt: faker.date.past()
-            };
-
-            const dto = {
-                title: stubValue.title,
-                description: stubValue.description,
-                completed: false
-            };
 
             sinon.stub(TodoRepository, 'add').withArgs(dto).onFirstCall().returns(stubValue)
                 .withArgs(dto).onSecondCall().throws(error);
@@ -178,22 +163,22 @@ describe('TodoService', () => {
     });
 
     describe('#update', () => {
+        const dto = {
+            id: mongoose.Types.ObjectId().toString(),
+            title: faker.lorem.sentence(),
+            description: faker.lorem.paragraph(),
+            completed: true
+        };
+        const updateResult = {
+            acknowledged: true,
+            modifiedCount: 1,
+            upsertedId: null,
+            upsertedCount: 0,
+            matchedCount: 1
+        };
+
         it('should return update item when valid item is passed', async () => {
             // Arrange
-            const dto = {
-                id: mongoose.Types.ObjectId().toString(),
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: true
-            };
-            const updateResult = {
-                acknowledged: true,
-                modifiedCount: 1,
-                upsertedId: null,
-                upsertedCount: 0,
-                matchedCount: 1
-            };
-
             sinon.stub(TodoRepository, 'update').withArgs(dto).returns(updateResult);
             const spy = sinon.spy(TodoService, 'update');
 
@@ -206,12 +191,7 @@ describe('TodoService', () => {
 
         it('should throw InvalidObjectIdError when malformed id is passed in the payload', async () => {
             // Arrange
-            const dto = {
-                id: 'Invalid id',
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: true
-            };
+            dto.id = 'Invalid id';
             const stub = sinon.stub(TodoService, 'update').withArgs(dto).throws(new InvalidObjectIdError());
 
             try {
@@ -227,12 +207,7 @@ describe('TodoService', () => {
         it('should throw ItemNotFoundError when non existent id is passed in the payload', async () => {
             // Arrange
             const notFoundId = mongoose.Types.ObjectId();
-            const dto = {
-                id: notFoundId.toString(),
-                title: faker.lorem.sentence(),
-                description: faker.lorem.paragraph(),
-                completed: true
-            };
+            dto.id = notFoundId.toString();
             const stub = sinon.stub(TodoService, 'update').withArgs(dto).throws(new ItemNotFoundError(`Todo item not found with id - ${dto.id}`));
 
             try {
@@ -248,14 +223,14 @@ describe('TodoService', () => {
     });
 
     describe('#delete', () => {
+        let id = mongoose.Types.ObjectId().toString();
+        const deleteResult = {
+            acknowledged: true,
+            deletedCount: 1
+        };
+
         it('should delete correctly when valid id is passed', async () => {
             // Arrange
-            const id = mongoose.Types.ObjectId().toString();
-            const deleteResult = {
-                acknowledged: true,
-                deletedCount: 1
-            };
-
             sinon.stub(TodoRepository, 'delete').withArgs(id).returns(deleteResult);
             const spy = sinon.spy(TodoService, 'delete');
 
@@ -268,7 +243,7 @@ describe('TodoService', () => {
 
         it('should throw InvalidObjectIdError when malformed id is passed', async () => {
             // Arrange
-            const id = 'Invalid id';
+            id = 'Invalid id';
             const stub = sinon.stub(TodoService, 'delete').withArgs(id).throws(new InvalidObjectIdError());
 
             try {
@@ -283,17 +258,17 @@ describe('TodoService', () => {
 
         it('should throw ItemNotFoundError when non existent id is passed', async () => {
             // Arrange
-            const notFoundId = mongoose.Types.ObjectId();
-            const stub = sinon.stub(TodoService, 'delete').withArgs(notFoundId).throws(new ItemNotFoundError(`Todo item not found with id - ${notFoundId.toString()}`));
+            id = mongoose.Types.ObjectId();
+            const stub = sinon.stub(TodoService, 'delete').withArgs(id).throws(new ItemNotFoundError(`Todo item not found with id - ${id}`));
 
             try {
                 // Act
-                await TodoService.delete(notFoundId);
+                await TodoService.delete(id);
             } catch (err) {
                 // Assert
                 expect(stub.calledOnce).to.be.true;
                 assert.instanceOf(err, ItemNotFoundError);
-                assert.strictEqual(err.message, `Todo item not found with id - ${notFoundId.toString()}`);
+                assert.strictEqual(err.message, `Todo item not found with id - ${id}`);
             }
         });
     });

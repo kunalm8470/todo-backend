@@ -20,7 +20,7 @@ Features -
 - [`G-Zip compression`](https://github.com/expressjs/compression) using, [`CORS`](https://github.com/expressjs/cors) and [`Helmet.js`](https://github.com/helmetjs/helmet) middleware to set useful HTTP headers.
 - Centralized Request body validation for HTTP POST and HTTP PUT requests using [`JSON schema AJV`](https://github.com/ajv-validator/ajv).
 - Unit testing using [`Mocha.js`](https://github.com/mochajs/mocha) as test runner, [`Chai.js`](https://github.com/chaijs/chai) for assertions, [`Sinon.js`](https://github.com/sinonjs/sinon) for stubbing/spying, and [`Faker.js`](https://github.com/Marak/Faker.js) for generating fake data.
-- e2e testing using [`Mocha.js`](https://github.com/mochajs/mocha) as test runner, supertest to send HTTP requests, and [`MongoDB In-Memory Server`](https://github.com/nodkz/mongodb-memory-server) for persistence during test runs.
+- e2e testing using [`Mocha.js`](https://github.com/mochajs/mocha) as test runner, [`supertest`](https://github.com/visionmedia/supertest) to send HTTP requests, and [`MongoDB In-Memory Server`](https://github.com/nodkz/mongodb-memory-server) for persistence during test runs.
 - HTML test coverage using [`nyc`](https://github.com/istanbuljs/nyc).
 
 NPM scripts -

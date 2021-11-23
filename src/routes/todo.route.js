@@ -1,12 +1,13 @@
 const express = require('express');
-const TodoController = require('../controllers/todo.controller');
-
 const router = express.Router();
 
-router.get('/', TodoController.get);
-router.get('/:id', TodoController.getById);
-router.post('/', TodoController.add);
-router.put('/', TodoController.update);
-router.delete('/:id', TodoController.delete);
+const { TodoController } = require('../controllers');
+const { BaseMiddleware, ValidateTodoSchemaMiddleware } = require('../middlewares');
+
+router.get('/', BaseMiddleware.validatePaginatedParameters, (req, res, next) => TodoController.get(req, res, next));
+router.get('/:id', (req, res, next) => TodoController.getById(req, res, next));
+router.post('/', ValidateTodoSchemaMiddleware('todo.create'), (req, res, next) => TodoController.add(req, res, next));
+router.put('/', ValidateTodoSchemaMiddleware('todo.update'), (req, res, next) => TodoController.update(req, res, next));
+router.delete('/:id', (req, res, next) => TodoController.delete(req, res, next));
 
 module.exports = router;

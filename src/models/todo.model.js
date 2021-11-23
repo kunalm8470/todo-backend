@@ -6,6 +6,10 @@ const TodoSchema = new Schema({
         type: String,
         required: true
     },
+    description: {
+        type: String,
+        required: true
+    },
     completed: {
         type: Boolean,
         default: false
@@ -14,6 +18,6 @@ const TodoSchema = new Schema({
     timestamps: true
 });
 
-TodoSchema.index({ title: 1, completed: 1 }, { unique: true });
+TodoSchema.index({ title: 1, description: 1 }, { unique: true });
 
 module.exports = mongoose.model('todos', TodoSchema, 'todos');

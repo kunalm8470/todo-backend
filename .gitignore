@@ -105,3 +105,4 @@ dist
 
 # VS Code metadata folder
 **/.vscode/
+.vscode/**

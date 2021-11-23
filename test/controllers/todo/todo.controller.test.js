@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const request = require('supertest');
 const { StatusCodes } = require('http-status-codes');
 
-const { app } = require('../../../src');
+const { app } = require('../../../index');
 const Todo = require('../../../src/models/todo.model');
 const { connect, disconnect, setupTestData, teardownTestData } = require('../setup');
 const fixture = require('./fixture');

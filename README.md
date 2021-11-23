@@ -30,4 +30,4 @@ NPM scripts -
 - `npm run test` - to run unit and e2e tests
 - `npm run coverage` - to generate test coverage
 
-Postman [`collection`](./Todo%20backend.postman_collection.json), [`collection public link`](https://www.postman.com/collections/4731c3cbf7cb74c8f010), and [`environment variables`](./Local.postman_environment.json) here.
+Postman [`collection`](./Todo%20backend.postman_collection.json), [`collection public link`](https://www.getpostman.com/collections/4731c3cbf7cb74c8f010), and [`environment variables`](./Local.postman_environment.json) here.

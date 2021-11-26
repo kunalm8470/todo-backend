@@ -2,21 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
-const rTracer = require('cls-rtracer');
-const { v4: uuid } = require('uuid');
 
 const { connect, options } = require('./src/config');
-const { NotFoundMiddleware, UnhandledErrorMiddleware } = require('./src/middlewares');
+const { CorrelationIdMiddleware, NotFoundMiddleware, UnhandledErrorMiddleware } = require('./src/middlewares');
 const logger = require('./src/utils/logger');
 
 const app = express();
 
 app.use(express.json());
-app.use(rTracer.expressMiddleware({
-    echoHeader: true,
-    headerName: 'X-Correlation-Id',
-    requestIdFactory: (req) => uuid()
-}));
+app.use(CorrelationIdMiddleware);
 app.use(cors());
 app.use(compression());
 app.use(helmet());

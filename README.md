@@ -17,8 +17,10 @@ A todo item looks like this -
 
 Features -
 - Scalable web server using vanilla javascript, [`Express.js`](https://github.com/expressjs/express) as web framework, and [`Mongoose.js`](https://github.com/Automattic/mongoose) as ODM.
-- [`G-Zip compression`](https://github.com/expressjs/compression) using, [`CORS`](https://github.com/expressjs/cors) and [`Helmet.js`](https://github.com/helmetjs/helmet) middleware to set useful HTTP headers.
+- Use of useful middlewares like [`G-Zip compression`](https://github.com/expressjs/compression), [`CORS`](https://github.com/expressjs/cors), [`Helmet.js`](https://github.com/helmetjs/helmet), and [`Correlation Id`](https://github.com/puzpuzpuz/cls-rtracer).
 - Centralized Request body validation for HTTP POST and HTTP PUT requests using [`JSON schema AJV`](https://github.com/ajv-validator/ajv).
+- Structured logging using [`Winston.js`](https://github.com/winstonjs/winston) and file transport and log rotation using [`winston-daily-rotate-file`](https://github.com/winstonjs/winston-daily-rotate-file).
+- Fully dockerized.
 - Unit testing using [`Mocha.js`](https://github.com/mochajs/mocha) as test runner, [`Chai.js`](https://github.com/chaijs/chai) for assertions, [`Sinon.js`](https://github.com/sinonjs/sinon) for stubbing/spying, and [`Faker.js`](https://github.com/Marak/Faker.js) for generating fake data.
 - e2e testing using [`Mocha.js`](https://github.com/mochajs/mocha) as test runner, [`supertest`](https://github.com/visionmedia/supertest) to send HTTP requests, and [`MongoDB In-Memory Server`](https://github.com/nodkz/mongodb-memory-server) for persistence during test runs.
 - HTML test coverage using [`nyc`](https://github.com/istanbuljs/nyc).
@@ -29,5 +31,8 @@ NPM scripts -
 - `npm run dev` - to start web server in dev mode using nodemon
 - `npm run test` - to run unit and e2e tests
 - `npm run coverage` - to generate test coverage
+
+Docker -
+`docker compose up` to start the web server with its dependencies.
 
 Postman [`collection`](./Todo%20backend.postman_collection.json), [`collection public link`](https://www.getpostman.com/collections/4731c3cbf7cb74c8f010), and [`environment variables`](./Local.postman_environment.json) here.

@@ -1,8 +1,11 @@
 const Ajv = require('ajv').default;
 const { StatusCodes } = require('http-status-codes');
 const { DuplicateItemError, InvalidObjectIdError, ItemNotFoundError, PaginationParameterError, PathNotFoundError } = require('../utils/errors');
+const logger = require('../utils/logger');
 
 const UnhandledErrorMiddleware = (err, req, res, next) => {
+    logger.error('Server exception - %s', err);
+
     let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
     let type = 'Server error';
     let details;

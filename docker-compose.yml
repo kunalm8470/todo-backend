@@ -1,0 +1,18 @@
+version: '3'
+services:
+  todo-backend:
+    image: todo-backend
+    build: .
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/app
+    environment:
+      - APP_PORT=5000
+      - MONGODB_CONNECTION_STRING=mongodb://db/todo
+    depends_on:
+      - db
+  db:
+    image: mongo:latest
+    ports:
+      - 27017:27017
